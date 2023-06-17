@@ -17,13 +17,14 @@ fetch(apiUrl)
       .map(repo => ({
         name: repo.name,
         description: repo.description,
-        url: repo.html_url
+        url: repo.html_url,
+        pageUrl: `https://cerotre.github.io/${repo.name}`
       }));
 
     // Generar el HTML para mostrar los repositorios
     const projectsHTML = repositories.map(repo => `
       <div class="project">
-        <h2>${repo.name}</h2>
+        <h2><a href="${repo.pageUrl}" target="_blank">${repo.name}</a></h2>
         <p>${repo.description || 'No hay descripción disponible.'}</p>
         <a href="${repo.url}" target="_blank">Ver en GitHub</a>
       </div>

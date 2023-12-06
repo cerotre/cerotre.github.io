@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>03 Gists</title>
+  <style>
+    /* Agregar estilos CSS aquí */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #222;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+    }
+
+    .gist {
+      background-color: #333;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .gist h2 {
+      font-size: 20px;
+      margin-top: 0;
+      color: #fff;
+    }
+
+    .gist p {
+      margin: 10px 0;
+      color: #ccc;
+    }
+
+    .gist a {
+      display: inline-block;
+      background-color: #555;
+      color: #fff;
+      padding: 8px 12px;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+
+    .gist a:hover {
+      background-color: #777;
+    }
+  </style>
+  <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body>
+  <div class="container">
+    <h1>03 Gists</h1>
+    <div id="gists"></div>
+
+    <script>
+      // URL de la API de GitHub para obtener los Gists del usuario
+      const apiUrl = 'https://api.github.com/users/cerotre/gists';
+
+      // Obtener el contenedor de Gists
+      const gistsContainer = document.getElementById('gists');
+
+      // Realizar la solicitud a la API de GitHub Gists
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          // Manipular los datos obtenidos
+          const gists = data.map(gist => ({
+            id: gist.id,
+            description: gist.description,
+            url: gist.html_url
+          }));
+
+          // Generar el HTML para mostrar los Gists
+          const gistsHTML = gists.map(gist => `
+            <div class="gist">
+              <h2>${gist.description || 'Sin descripción'}</h2>
+              <p>ID: ${gist.id}</p>
+              <a href="${gist.url}" target="_blank">Ver en GitHub</a>
+            </div>
+          `).join('');
+
+          // Agregar el HTML generado al contenedor de Gists
+          gistsContainer.innerHTML = gistsHTML;
+        })
+        .catch(error => {
+          console.error(error);
+          gistsContainer.innerHTML = 'Ha ocurrido un error al cargar los Gists.';
+        });
+    </script>
+  </div>
+</body>
+</html>

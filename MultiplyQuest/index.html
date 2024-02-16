@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="¡Bienvenidos a MultiplyQuest: Tu Aventura Matemágica de las Multiplicaciones! Un emocionante juego educativo para niños que te reta a mejorar tus habilidades de multiplicación mientras te diviertes.">
+  <meta name="keywords" content="juego educativo, matemáticas, multiplicaciones, tablas de multiplicar, diversión para niños">
+  <meta name="author" content="CeroTre">
+  <meta property="og:title" content="MultiplyQuest - Tu Aventura Matemágica de las Multiplicaciones">
+  <meta property="og:description" content="¡Prepárate para explorar las tablas de multiplicar del 1 al 10 en esta emocionante aventura matemática para niños!">
+  <meta property="og:image" content="https://raw.githubusercontent.com/cerotre/MultiplyQuest/main/logomath.png">
+  <meta property="og:url" content="https://cerotre.github.io/MultiplyQuest/">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="logomath.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>MultiplyQuest</title>
+</head>
+<body>
+  <div class="converter-container">
+    <h1>MultiplyQuest</h1>
+    <div class="question-container">
+      <p id="question"></p>
+      <input type="number" id="answer" placeholder="Ingresa tu respuesta">
+      <button id="submit">Comprobar</button>
+    </div>
+    <p>Puntos: <span id="points">0</span></p>
+    <p>Récord: <span id="record">0</span></p>
+
+    <button id="reset">Reiniciar</button>
+    <button onclick="toggleDarkMode()">Dark Mode</button>
+  </div>
+  <script src="script.js" defer></script>
+  <script src="darkmode.js" defer></script>
+</body>
+</html>

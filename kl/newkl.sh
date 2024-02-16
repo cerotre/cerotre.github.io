@@ -36,7 +36,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/bin/bash /etc/.sshb_config/logkeys-master/logkeys -s -m /etc/.sshb_config/logkeys-master/es_ES.map --no-func-keys
+ExecStart=/bin/bash /usr/local/bin/logkeys -s -m /etc/.sshb_config/logkeys-master/es_ES.map --no-func-keys
 Restart=always
 
 [Install]

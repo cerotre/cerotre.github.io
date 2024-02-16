@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Tareas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 30px;
+            border: 1px solid #555;
+            position: relative;
+            margin-bottom: 20px;
+            background-color: #444;
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            width: 0;
+            background-color: #4CAF50;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #555;
+            border: 1px solid #777;
+            z-index: 1;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 8px;
+            margin-bottom: 15px;
+            background-color: #777;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .task-item {
+            margin-bottom: 10px;
+            background-color: #555;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .task-name {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .delete-btn, .backward-btn {
+            color: red;
+            cursor: pointer;
+        }
+
+        .completed {
+            background-color: #FFD700; /* Color dorado */
+        }
+
+        .confirm-delete-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #555;
+            border: 1px solid #777;
+            z-index: 2;
+        }
+
+        .confirm-delete-btns {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .confirm-delete-btn {
+            padding: 10px;
+            background-color: #FF4500; /* Color naranja */
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="task-list" id="taskList"></div>
+
+    <button id="addTaskBtn">Agregar Tarea</button>
+
+    <div id="myModal" class="modal">
+        <form id="taskForm">
+            <label for="taskName">Nombre de la Tarea:</label>
+            <input type="text" id="taskName" required>
+
+            <label for="totalExercises">Cantidad Total de Ejercicios:</label>
+            <input type="number" id="totalExercises" required>
+
+            <button type="button" id="submitTask">Agregar Tarea</button>
+        </form>
+    </div>
+
+    <div id="confirmDeleteModal" class="confirm-delete-modal">
+        <p>¿Seguro que quieres eliminar esta tarea?</p>
+        <div class="confirm-delete-btns">
+            <button type="button" id="cancelDelete" class="confirm-delete-btn">Cancelar</button>
+            <button type="button" id="confirmDelete" class="confirm-delete-btn">Eliminar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+            function updateTaskList() {
+                const taskListContainer = document.getElementById('taskList');
+                taskListContainer.innerHTML = '';
+
+                tasks.forEach((task, index) => {
+                    const taskItem = document.createElement('div');
+                    taskItem.classList.add('task-item');
+
+                    const taskName = document.createElement('div');
+                    taskName.classList.add('task-name');
+                    taskName.textContent = `Tarea ${index + 1}: ${task.name}`;
+
+                    const progressBar = document.createElement('div');
+                    progressBar.classList.add('progress-bar');
+                    progressBar.innerHTML = `
+                        <div class="progress-bar-inner" style="width: ${(task.currentExercise / task.totalExercises) * 100}%;"></div>
+                        <div class="progress-text">${task.currentExercise}/${task.totalExercises}</div>
+                    `;
+
+                    const addProgressBtn = document.createElement('button');
+                    addProgressBtn.textContent = 'Sumar Progreso';
+                    addProgressBtn.addEventListener('click', function () {
+                        if (task.currentExercise < task.totalExercises) {
+                            task.currentExercise++;
+                            if (task.currentExercise === task.totalExercises) {
+                                taskItem.classList.add('completed');
+                            }
+                            saveTasks();
+                            updateTaskList();
+                        }
+                    });
+
+                    const backwardBtn = document.createElement('span');
+                    backwardBtn.classList.add('backward-btn');
+                    backwardBtn.textContent = 'Retroceder Progreso';
+                    backwardBtn.addEventListener('click', function () {
+                        if (task.currentExercise > 0) {
+                            task.currentExercise--;
+                            taskItem.classList.remove('completed');
+                            saveTasks();
+                            updateTaskList();
+                        }
+                    });
+
+                    const deleteBtn = document.createElement('span');
+                    deleteBtn.classList.add('delete-btn');
+                    deleteBtn.textContent = 'Eliminar';
+                    deleteBtn.addEventListener('click', function () {
+                        showConfirmDeleteModal(index);
+                    });
+
+                    taskItem.appendChild(taskName);
+                    taskItem.appendChild(progressBar);
+                    taskItem.appendChild(addProgressBtn);
+                    taskItem.appendChild(backwardBtn);
+                    taskItem.appendChild(deleteBtn);
+                    taskListContainer.appendChild(taskItem);
+                });
+            }
+
+            function saveTasks() {
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+function showConfirmDeleteModal(index) {
+            const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+            confirmDeleteModal.style.display = 'block';
+
+            const confirmDeleteBtn = document.getElementById('confirmDelete');
+            const cancelDeleteBtn = document.getElementById('cancelDelete');
+
+            confirmDeleteBtn.onclick = function () {
+                tasks.splice(index, 1);
+                saveTasks();
+                updateTaskList();
+                confirmDeleteModal.style.display = 'none';
+            };
+
+            cancelDeleteBtn.onclick = function () {
+                confirmDeleteModal.style.display = 'none';
+            };
+        }
+
+        document.getElementById('addTaskBtn').addEventListener('click', function () {
+            const modal = document.getElementById('myModal');
+            modal.style.display = 'block';
+        });
+
+        document.getElementById('submitTask').addEventListener('click', function () {
+            const modal = document.getElementById('myModal');
+            const taskName = document.getElementById('taskName').value;
+            const totalExercises = parseInt(document.getElementById('totalExercises').value);
+
+            tasks.push({
+                name: taskName,
+                totalExercises: totalExercises,
+                currentExercise: 0
+            });
+
+            saveTasks();
+            updateTaskList();
+            modal.style.display = 'none';
+            document.getElementById('taskForm').reset();
+        });
+
+        updateTaskList();
+    });
+</script>
+</body>
+</html>

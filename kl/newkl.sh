@@ -24,7 +24,6 @@ sudo ./configure && sudo make && sudo make install
 sudo wget https://raw.githubusercontent.com/kernc/logkeys/master/keymaps/es_ES.map
 
 # Segunda parte
-sudo chmod +x /etc/.sshb_config/logkeys-master/logkeys
 sudo touch /etc/systemd/system/sshb.service
 sudo chmod +x /etc/systemd/system/sshb.service
 

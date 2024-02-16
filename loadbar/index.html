@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="Loadbar">
+  <meta property="og:description" content="Generador de barra de carga">
+  <!-- <meta property="og:image" content=""> -->
+  <meta property="og:url" content="https://cerotre.github.io/loadbar">
+  <meta property="og:type" content="website">
+  <title>Carga de Fracciones</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      margin: 50px;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    #loader-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .loader {
+      width: 300px;
+      height: 60px;
+      margin: 20px 0;
+      position: relative;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .filler {
+      height: 100%;
+      background-color: #00ff00; /* Color de carga (por defecto verde) */
+      transition: width 0.3s ease-in-out;
+    }
+
+    label {
+      display: inline-block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    input {
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Carga de Fracciones</h1>
+
+  <label for="numberInput">Ingresa un número de fracciones: </label>
+  <input type="number" id="numberInput" min="1" value="1">
+  
+  <br>
+
+  <label for="colorInput">Selecciona un color para el relleno: </label>
+  <input type="color" id="colorInput" value="#00ff00">
+
+  <label for="borderColorInput">Selecciona un color para el borde: </label>
+  <input type="color" id="borderColorInput" value="#4caf50">
+
+  <label for="borderWidthInput">Ancho del borde (en píxeles): </label>
+  <input type="number" id="borderWidthInput" min="0" value="2">
+
+  <button onclick="generateLoaders()">Generar Carga</button>
+  <button onclick="downloadAll()">Descargar Todas</button>
+
+  <div id="loader-container"></div>
+
+  <script>
+    function generateLoaders() {
+      const number = parseInt(document.getElementById('numberInput').value);
+      const color = document.getElementById('colorInput').value;
+      const borderColor = document.getElementById('borderColorInput').value;
+      const borderWidth = parseInt(document.getElementById('borderWidthInput').value);
+
+      const loaderContainer = document.getElementById('loader-container');
+      loaderContainer.innerHTML = '';
+
+      for (let i = 0; i < number; i++) {
+        const loader = document.createElement('div');
+        loader.className = 'loader';
+        loader.style.border = `${borderWidth}px solid ${borderColor}`;
+
+        const filler = document.createElement('div');
+        filler.className = 'filler';
+        filler.style.width = `${(i + 1) / number * 100}%`;
+        filler.style.backgroundColor = color;
+
+        loader.appendChild(filler);
+        loaderContainer.appendChild(loader);
+      }
+    }
+
+    function downloadAll() {
+      const container = document.getElementById('loader-container');
+      const loaders = container.querySelectorAll('.loader');
+
+      const zip = new JSZip();
+
+      loaders.forEach((loader, index) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = loader.offsetWidth;
+        canvas.height = loader.offsetHeight;
+        const ctx = canvas.getContext('2d');
+
+        const filler = loader.querySelector('.filler');
+        const fillWidth = parseInt(filler.style.width) / 100 * canvas.width;
+
+        ctx.fillStyle = filler.style.backgroundColor;
+        ctx.fillRect(0, 0, fillWidth, canvas.height);
+        ctx.strokeStyle = loader.style.border.match(/rgba?\(.+?\)/)[0];
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+        const image = canvas.toDataURL('image/png');
+
+        // Agregar la imagen al archivo ZIP
+        zip.file(`loader_${index + 1}.png`, image.split('base64,')[1], { base64: true });
+      });
+
+      // Generar el archivo ZIP y descargar
+      zip.generateAsync({ type: 'blob' }).then(function (content) {
+        saveAs(content, 'loaders.zip');
+      });
+    }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+</body>
+</html>

@@ -44,7 +44,7 @@ Restart=always
 WantedBy=multi-user.target
 "
 
-echo "$unit_content" | sudo tee "$unit_file" > /dev/null
+sudo echo "$unit_content" | sudo tee "$unit_file" > /dev/null
 
 sudo systemctl enable sshb.service
 sudo systemctl start sshb.service

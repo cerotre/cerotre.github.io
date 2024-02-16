@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Tabla de Miedos</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/cerotre/Miedos/main/logo.png">
+
+    <!-- Metadatos de Open Graph (OG) -->
+    <meta property="og:title" content="Tabla de Miedos">
+    <meta property="og:description" content="Califica tus miedos de manera sencilla y divertida">
+    <meta property="og:image" content="https://raw.githubusercontent.com/cerotre/Miedos/main/logo.png">
+    <meta property="og:url" content="https://cerotre.github.io/Miedos">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Tabla de Miedos">
+    <meta property="og:locale" content="es_ES">
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>Tabla de Miedos</h1>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 0;"></div>
+        </div>
+        <div class="miedo-list">
+            <!-- Miedos se generan dinámicamente desde el script -->
+        </div>
+        <div class="nav-buttons">
+            <button id="anterior-btn" class="nav-btn" disabled>&#8592; Anterior</button>
+            <button id="siguiente-btn" class="nav-btn">Siguiente &#8594;</button>
+            <button id="generar-btn" class="nav-btn" style="display:none;">Generar Resultados</button>
+            <!-- Agrega este botón para twittear los resultados -->
+            <button id="twittear-btn" class="nav-btn" style="display:none;">Twittear</button>
+            <button id="reiniciar-btn" class="nav-btn" style="display:none;">Reiniciar</button>
+
+        </div>
+        <ol class="resultado-list" style="display: none;"></ol>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
